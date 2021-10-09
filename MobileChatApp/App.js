@@ -6,10 +6,16 @@ const socketUrl = "127.0.0.1:8080";
 
 export default function App() {
   const [messageToSend, setMessageToSend] = React.useState("");
+  const [recvMessages, setRecvMessages] = React.useState([]);
   const socket = React.useRef(null);
 
   React.useEffect(() => {
     socket.current = new WebSocket(`ws://${socketUrl}`);
+
+    //listen for new messages send from our ws server to us
+    socket.current.onmessage = (message) => {
+      setRecvMessages((currState) => [...currState, message.data]);
+    };
   }, []);
 
   const sendMessage = () => {
@@ -17,10 +23,14 @@ export default function App() {
     setMessageToSend(""); //clear the TextInput
   };
 
+  const textOfRecvMessages = recvMessages.map((msg) => (
+    <Text key={msg}>{msg}</Text>
+  ));
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      <Text>Open up App.js to start working on your app!</Text>
+      {textOfRecvMessages}
       <TextInput
         value={messageToSend}
         onChangeText={(text) => setMessageToSend(text)}

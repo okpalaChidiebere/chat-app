@@ -13,6 +13,13 @@ wss.on("connection", (ws) => {
   //We listen for websocket connections here by adding WebSocket EventListeners
   ws.on("message", (message, isBinary) => {
     console.log(message.toString()); //FYI: we used the toString() to convert the message from binary to human readable data
+
+    //broadcast this new message received to all clients currently connected to our ws server
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(message.toString());
+      }
+    });
   });
 });
 
