@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { StyleSheet, Text, View, TextInput } from "react-native";
+import { StyleSheet } from "react-native";
+import { GiftedChat } from "react-native-gifted-chat"; //https://github.com/FaridSafi/react-native-gifted-chat
 
 const socketUrl = "127.0.0.1:8080";
 
@@ -11,6 +12,19 @@ export default function App() {
 
   React.useEffect(() => {
     socket.current = new WebSocket(`ws://${socketUrl}`);
+
+    setRecvMessages([
+      {
+        _id: 1,
+        text: "Hello developer",
+        createdAt: new Date(),
+        user: {
+          _id: 2,
+          name: "React Native",
+          avatar: "https://placeimg.com/140/140/any",
+        },
+      },
+    ]);
 
     //listen for new messages send from our ws server to us
     socket.current.onmessage = (message) => {
@@ -23,24 +37,17 @@ export default function App() {
     setMessageToSend(""); //clear the TextInput
   };
 
-  const textOfRecvMessages = recvMessages.map((msg) => (
-    <Text key={msg}>{msg}</Text>
-  ));
-
   return (
-    <View style={styles.container}>
+    <>
       <StatusBar style="auto" />
-      {textOfRecvMessages}
-      <TextInput
-        value={messageToSend}
-        onChangeText={(text) => setMessageToSend(text)}
-        placeholder="Enter Chat message.."
-        onSubmitEditing={
-          /** when the user presses the return key on TextInput */
-          sendMessage
-        }
+      <GiftedChat
+        messages={recvMessages}
+        /*onSend={(messages) => onSend(messages)}*/
+        user={{
+          _id: 1,
+        }}
       />
-    </View>
+    </>
   );
 }
 
