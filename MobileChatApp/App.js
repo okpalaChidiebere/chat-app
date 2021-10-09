@@ -1,8 +1,13 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from "expo-status-bar";
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
+
+const socketUrl = "127.0.0.1:8080";
 
 export default function App() {
+  React.useEffect(() => {
+    const socket = new WebSocket(`ws://${socketUrl}`);
+  }, []);
   return (
     <View style={styles.container}>
       <Text>Open up App.js to start working on your app!</Text>
@@ -14,8 +19,8 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

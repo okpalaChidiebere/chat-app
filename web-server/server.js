@@ -9,6 +9,7 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 wss.on("connection", (ws) => {
+  console.log("A user connected!");
   //We listen for websocket connections here by adding WebSocket EventListeners
 });
 
