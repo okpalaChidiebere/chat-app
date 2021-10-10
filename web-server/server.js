@@ -12,6 +12,13 @@ const wss = new WebSocket.Server({ server });
 let currentUserId = 2; // we started at 2 because we dont want the chat messages sent out to appear on the right side of the GiftedChat UI. NOTE: we are using integers here because our GiftedChat uses numbers as users. In real App we would use uuid
 const users = {}; //Create a directory of users with each id mapped to a ws id connection. Learn more on managing ids here https://stackoverflow.com/questions/13364243/websocketserver-node-js-how-to-differentiate-clients
 
+function createUserAvatar() {
+  const rand1 = Math.round(Math.random() * 200 + 100); //Note that Math.random generates a random number between 0 nd 1. We want the base value to be 100 thats why we added 100
+  const rand2 = Math.round(Math.random() * 200 + 100);
+
+  return `https://placeimg.com/${rand1}/${rand2}/any`;
+}
+
 wss.on("connection", (ws) => {
   //NOTE: this id property was added by us ourself. the ws value dont have this by default
   ws.id = Math.random().toString(36).substr(-8); // as assign a uniqueID to this user. Ideally we will use uuid but this will do for dev :)
@@ -32,6 +39,7 @@ wss.on("connection", (ws) => {
     switch (readableFmt.action) {
       case "join":
         users[ws.id].username = readableFmt.username;
+        users[ws.id].avatar = createUserAvatar();
         //console.log(users[ws.id], ws.id);
         break;
       case "message":
