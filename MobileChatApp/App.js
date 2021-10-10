@@ -34,8 +34,13 @@ export default function App() {
      *
      * Once the user connects to our ws server, the backend will assign then a
      */
-    if (socket.current.readyState === socket.current.OPEN)
-      socket.current.send(messages[0].text); //we need just the text value to send to our ws backend which will broadcast this message to others
+    if (socket.current.readyState === socket.current.OPEN) {
+      const data = {
+        action: "message",
+        text: messages[0].text,
+      };
+      socket.current.send(JSON.stringify(data)); //we need just the text value to send to our ws backend which will broadcast this message to others
+    }
 
     /**
      * We update our UI optimistically; if the message dont get broadcasted due to
