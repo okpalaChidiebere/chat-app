@@ -8,9 +8,12 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import JoinChatContext from "../JoinChatContext";
+import Strings from "../values/string";
 
-export default function JoinScreen({ handleJoinChat }) {
+export function JoinScreen({}) {
   const [username, setUsername] = React.useState("");
+  const { handleJoinChat } = React.useContext(JoinChatContext);
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -36,4 +39,14 @@ export default function JoinScreen({ handleJoinChat }) {
       </KeyboardAvoidingView>
     </View>
   );
+}
+
+export function JoinScreenOptions(hasJoined) {
+  return {
+    title: Strings.app_name,
+    headerMode: "screen",
+    // When join a chat, a pop animation feels intuitive
+    animationTypeForReplace: hasJoined ? "pop" : "push",
+    headerShown: false,
+  };
 }
