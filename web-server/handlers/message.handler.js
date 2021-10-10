@@ -15,7 +15,7 @@ function handleMessage(wss, ws, users, messageText) {
   wss.clients.forEach((client) => {
     //we broadcast this message to everyone except the sender
     if (client !== ws && client.readyState === WebSocket.OPEN) {
-      const user = users[client.id]; //we get the userId from our server! we dont have to rely on the client to supply this userId which is not a good practice
+      const user = users[ws.id]; //we get the userId of the person that want to broadcast their message to others from our server! we dont have to rely on the client to supply this userId which is not a good practice
       const broadCastMessage = createMessage(user, messageText);
       //console.log(broadCastMessage);
       client.send(JSON.stringify(broadCastMessage));

@@ -1,11 +1,13 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { GiftedChat } from "react-native-gifted-chat"; //https://github.com/FaridSafi/react-native-gifted-chat
+import JoinScreen from "./screens/JoinScreen";
 
 const socketUrl = "127.0.0.1:8080";
 
 export default function App() {
   const [recvMessages, setRecvMessages] = React.useState([]);
+  const [hasJoined, setHasJoined] = React.useState(false);
   const socket = React.useRef(null);
 
   React.useEffect(() => {
@@ -55,27 +57,42 @@ export default function App() {
     );
   }, []);
 
+  const joinChat = React.useCallback((username) => {
+    socket.current.send(
+      JSON.stringify({
+        action: "join",
+        username,
+      })
+    );
+    setHasJoined(true);
+  }, []);
+
   return (
     <>
       <StatusBar style="auto" />
-      <GiftedChat
-        messages={recvMessages}
-        onSend={(messages) => sendMessage(messages)}
-        user={{
-          /**
-           * Gifted messages with userId 1 appears on the right side of the chat UI with a default
-           * blue color background container view
-           *
-           * When the userId is 1, it means that we wrote the message. If we change the id to 2,
-           * then all messages with user._id of 2 will appear on the right as every other messages
-           * will appear on the left
-           *
-           * NOTE: in real App, we would use uuid as userIds and thesame concepts will apply as well.
-           * But for this demo, this will do
-           */
-          _id: 1,
-        }}
-      />
+      {hasJoined ? (
+        <GiftedChat
+          renderUsernameOnMessage /**This will show the usernames of the user sending the message */
+          messages={recvMessages}
+          onSend={(messages) => sendMessage(messages)}
+          user={{
+            /**
+             * Gifted messages with userId 1 appears on the right side of the chat UI with a default
+             * blue color background container view
+             *
+             * When the userId is 1, it means that we wrote the message. If we change the id to 2,
+             * then all messages with user._id of 2 will appear on the right as every other messages
+             * will appear on the left
+             *
+             * NOTE: in real App, we would use uuid as userIds and thesame concepts will apply as well.
+             * But for this demo, this will do
+             */
+            _id: 1,
+          }}
+        />
+      ) : (
+        <JoinScreen handleJoinChat={joinChat} />
+      )}
     </>
   );
 }

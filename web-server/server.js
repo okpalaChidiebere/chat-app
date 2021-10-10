@@ -32,10 +32,20 @@ wss.on("connection", (ws) => {
     switch (readableFmt.action) {
       case "join":
         users[ws.id].username = readableFmt.username;
+        //console.log(users[ws.id], ws.id);
         break;
       case "message":
         const messageText = readableFmt.text;
-        messageHandler.handleMessage(wss, ws, users, messageText);
+        //console.log("message",users[ws.id], ws.id);
+
+        /**
+         * If the user don't have a username if assigned to them, we know that the
+         * have not joined the public chat yet. So there is no need to broadcast
+         * the message they want to broadcast. In our app, this will never happen but
+         * good to implement anyways
+         *  */
+        if (users[ws.id].username)
+          messageHandler.handleMessage(wss, ws, users, messageText);
         break;
     }
   });
