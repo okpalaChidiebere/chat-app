@@ -1,3 +1,4 @@
+import { setWsUser, SET_WS_USER } from "../actions/wsSelfUser";
 import { JOIN_CHAT, MESSAGE, message, PRIVATE_MESSAGE } from "../actions/chat";
 import {
   receiveOnlineUsers,
@@ -17,6 +18,8 @@ const websocket = (ws) => (store) => (next) => (action) => {
         return store.dispatch(message(receivedData));
       case RECEIVE_USERS_ONLINE: //if the data coming in is an updated list of online users. It could be update about a connected or disconnected ws
         return store.dispatch(receiveOnlineUsers(receivedData.usersOnline));
+      case SET_WS_USER:
+        return store.dispatch(setWsUser(receivedData.data));
     }
   };
 

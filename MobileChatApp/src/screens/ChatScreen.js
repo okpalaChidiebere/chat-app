@@ -1,6 +1,6 @@
 import React from "react";
 import { GiftedChat } from "react-native-gifted-chat"; //https://github.com/FaridSafi/react-native-gifted-chat
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { privateMessage } from "../actions/chat";
 
 export function ChatScreen({ route }) {
@@ -8,6 +8,8 @@ export function ChatScreen({ route }) {
 
   const dispatch = useDispatch();
   const { userId } = route.params;
+  const selfUser = useSelector((state) => state.wsSelfUser);
+  //console.log(selfUser);
 
   const sendMessage = React.useCallback((messages = []) => {
     /**
@@ -42,17 +44,9 @@ export function ChatScreen({ route }) {
       onSend={(messages) => sendMessage(messages)}
       user={{
         /**
-         * Gifted messages with userId 1 appears on the right side of the chat UI with a default
-         * blue color background container view
-         *
-         * When the userId is 1, it means that we wrote the message. If we change the id to 2,
-         * then all messages with user._id of 2 will appear on the right as every other messages
-         * will appear on the left
-         *
-         * NOTE: in real App, we would use uuid as userIds and thesame concepts will apply as well.
-         * But for this demo, this will do
+         * Any chat that dont have thesame selfUser.userId will appear on the left side of the screen
          */
-        _id: 1,
+        _id: selfUser.userId,
       }}
     />
   );

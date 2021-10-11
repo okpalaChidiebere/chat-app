@@ -57,6 +57,20 @@ wss.on("connection", (ws) => {
       case "join":
         users[ws.id].username = readableFmt.username;
         users[ws.id].avatar = createUserAvatar();
+
+        /**
+         * REMEMBER: when the user used connected, we gave them a unique userID (where we called uuid.v4() ) in the ws directory
+         * We are sending the ws userID back to the client, so that the client can use to differentiate
+         * his or herself among other millions of connections
+         *
+         * This information is vital for the clients to use to send private messaged to each other
+         * in our ws server.
+         *
+         * This userId is different from the userId you will typically use in your RESP API to persist data in your db
+         * to identify who data belongs to who.
+         *  */
+        ws.send(JSON.stringify({ type: "self_user", data: users[ws.id] }));
+
         /**
          * Get list of other online users with usernames.
          * FYI: we dont want to send the ws connectionIds.
