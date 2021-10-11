@@ -1,6 +1,7 @@
 const express = require("express");
 const http = require("http");
 const WebSocket = require("ws"); //https://www.npmjs.com/package/ws
+const uuid = require("uuid");
 const messageHandler = require("./handlers/message.handler");
 
 const port = 8080;
@@ -9,7 +10,6 @@ const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-let currentUserId = 2; // we started at 2 because we dont want the chat messages sent out to appear on the right side of the GiftedChat UI. NOTE: we are using integers here because our GiftedChat uses numbers as users. In real App we would use uuid
 const users = {}; //Create a directory of users with each id mapped to a ws id connection. Learn more on managing ids here https://stackoverflow.com/questions/13364243/websocketserver-node-js-how-to-differentiate-clients
 
 function createUserAvatar() {
@@ -26,7 +26,7 @@ function getUsersOnline() {
 wss.on("connection", (ws) => {
   //NOTE: this id property was added by us ourself. the ws value dont have this by default
   ws.id = Math.random().toString(36).substr(-8); // as assign a uniqueID to this user. Ideally we will use uuid but this will do for dev :)
-  users[ws.id] = { userId: currentUserId++ }; //we map each unique ws id connection to the users
+  users[ws.id] = { userId: uuid.v4() }; //we map each unique ws id connection to the users
 
   console.log(`A user connected! ${ws.id}`);
 
@@ -35,6 +35,19 @@ wss.on("connection", (ws) => {
     console.log(`User disconnected: ${ws.id}`);
     // remove from the map
     delete users[ws.id];
+
+    /** As this user goes offline we broadcast to others about this. */
+    wss.clients.forEach((client) => {
+      //we broadcast this message to everyone excluding this connection that a this user is offline!
+      if (client !== ws && client.readyState === WebSocket.OPEN) {
+        client.send(
+          JSON.stringify({
+            type: "users_online",
+            usersOnline: getUsersOnline(),
+          })
+        );
+      }
+    });
   });
 
   //We listen for websocket connections here by adding WebSocket EventListeners
@@ -52,7 +65,7 @@ wss.on("connection", (ws) => {
         wss.clients.forEach((client) => {
           //we broadcast this message to everyone including this connection that a this user came online!
           if (client.readyState === WebSocket.OPEN) {
-            ws.send(
+            client.send(
               JSON.stringify({
                 type: "users_online",
                 usersOnline: onlyUsersWithUsernames,

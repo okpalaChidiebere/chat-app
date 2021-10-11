@@ -15,7 +15,7 @@ const websocket = (ws) => (store) => (next) => (action) => {
     switch (receivedData.type) {
       case MESSAGE:
         return store.dispatch(message(receivedData));
-      case RECEIVE_USERS_ONLINE: //if the data coming in is an updated list of online users
+      case RECEIVE_USERS_ONLINE: //if the data coming in is an updated list of online users. It could be update about a connected or disconnected ws
         return store.dispatch(receiveOnlineUsers(receivedData.usersOnline));
     }
   };
