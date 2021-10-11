@@ -4,6 +4,7 @@ import {
   receiveOnlineUsers,
   RECEIVE_USERS_ONLINE,
 } from "../actions/usersOnline";
+import { handleReceiveConversations } from "../actions/conversations";
 
 /**
  * Sends data to our WebSocket Server. As we dispatching redux actions, this middleware
@@ -17,7 +18,9 @@ const websocket = (ws) => (store) => (next) => (action) => {
       case MESSAGE:
         return store.dispatch(message(receivedData));
       case RECEIVE_USERS_ONLINE: //if the data coming in is an updated list of online users. It could be update about a connected or disconnected ws
-        return store.dispatch(receiveOnlineUsers(receivedData.usersOnline));
+        store.dispatch(receiveOnlineUsers(receivedData.usersOnline));
+        store.dispatch(handleReceiveConversations(receivedData.usersOnline));
+        return;
       case SET_WS_USER:
         return store.dispatch(setWsUser(receivedData.data));
     }
