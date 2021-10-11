@@ -1,5 +1,9 @@
-import { MESSAGE, message } from "../actions";
+import { JOIN_CHAT, MESSAGE, message } from "../actions";
 
+/**
+ * Sends data to our WebSocket Server. As we dispatching redux actions, this middleware
+ * checks to see if we marked the current action as an a data we want to send to websocket
+ */
 const websocket = (ws) => (store) => (next) => (action) => {
   ws.onmessage = (event) => {
     //this is fine for now, but in a prod app, we would have data with different action type, so we have to check for the actionTypes, to know what action to dispatch in our store
@@ -18,6 +22,12 @@ const websocket = (ws) => (store) => (next) => (action) => {
         data = {
           action: action.type,
           text: action.message,
+        };
+        break;
+      case JOIN_CHAT:
+        data = {
+          action: action.type,
+          username: action.username,
         };
         break;
       default:

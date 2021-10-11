@@ -8,11 +8,14 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { joinChat } from "../actions";
 import JoinChatContext from "../JoinChatContext";
 import Strings from "../values/string";
 
 export function JoinScreen({}) {
   const [username, setUsername] = React.useState("");
+  const dispatch = useDispatch();
   const { handleJoinChat } = React.useContext(JoinChatContext);
 
   return (
@@ -34,7 +37,12 @@ export function JoinScreen({}) {
         />
         <Button
           title="Join Chat"
-          onPress={() => username !== "" && handleJoinChat(username)}
+          onPress={() => {
+            if (username !== "") {
+              dispatch(joinChat(username, true));
+              handleJoinChat(username);
+            }
+          }}
         />
       </KeyboardAvoidingView>
     </View>

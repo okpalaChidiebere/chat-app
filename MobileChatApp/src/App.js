@@ -7,6 +7,9 @@ import MainNavigator from "./navigation";
 import JoinChatContext from "./JoinChatContext";
 import store from "./store/configureStore";
 
+/*
+// for testing purposes
+
 store.subscribe(() => {
   console.log("new state", store.getState());
 });
@@ -16,6 +19,7 @@ store.dispatch({
   data: "Hello!!",
   socket: true,
 });
+*/
 
 export default function App() {
   const [state, dispatch] = React.useReducer(
