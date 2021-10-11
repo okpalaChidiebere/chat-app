@@ -44,10 +44,13 @@ export function ChatScreen() {
   );
 }
 
-export function ChatScreenOptions() {
+export function ChatScreenOptions({ route }) {
+  const { name } = route.params;
+
   return {
-    title: Strings.app_name,
+    title: name, //display of the name person this user is chatting with
     headerMode: "screen",
-    headerShown: false,
+    headerBackTitleVisible: false, // we dont want the back button visible for iOS
   };
+  //learn more stackScreen Props here https://reactnavigation.org/docs/stack-navigator/
 }
