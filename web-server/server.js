@@ -19,6 +19,10 @@ function createUserAvatar() {
   return `https://placeimg.com/${rand1}/${rand2}/any`;
 }
 
+function getUsersOnline() {
+  return Object.values(users).filter((u) => u.username !== undefined);
+}
+
 wss.on("connection", (ws) => {
   //NOTE: this id property was added by us ourself. the ws value dont have this by default
   ws.id = Math.random().toString(36).substr(-8); // as assign a uniqueID to this user. Ideally we will use uuid but this will do for dev :)
@@ -40,6 +44,22 @@ wss.on("connection", (ws) => {
       case "join":
         users[ws.id].username = readableFmt.username;
         users[ws.id].avatar = createUserAvatar();
+        /**
+         * Get list of other online users with usernames.
+         * FYI: we dont want to send the ws connectionIds.
+         *  */
+        const onlyUsersWithUsernames = getUsersOnline();
+        wss.clients.forEach((client) => {
+          //we broadcast this message to everyone including this connection that a this user came online!
+          if (client.readyState === WebSocket.OPEN) {
+            ws.send(
+              JSON.stringify({
+                type: "users_online",
+                usersOnline: onlyUsersWithUsernames,
+              })
+            );
+          }
+        });
         //console.log(users[ws.id], ws.id);
         break;
       case "message":

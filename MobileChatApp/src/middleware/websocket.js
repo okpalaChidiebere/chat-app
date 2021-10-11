@@ -1,4 +1,8 @@
 import { JOIN_CHAT, MESSAGE, message } from "../actions";
+import {
+  receiveOnlineUsers,
+  RECEIVE_USERS_ONLINE,
+} from "../actions/usersOnline";
 
 /**
  * Sends data to our WebSocket Server. As we dispatching redux actions, this middleware
@@ -6,8 +10,14 @@ import { JOIN_CHAT, MESSAGE, message } from "../actions";
  */
 const websocket = (ws) => (store) => (next) => (action) => {
   ws.onmessage = (event) => {
-    //this is fine for now, but in a prod app, we would have data with different action type, so we have to check for the actionTypes, to know what action to dispatch in our store
-    return store.dispatch(message(JSON.parse(event.data)));
+    //console.log("onMessage");
+    const receivedData = JSON.parse(event.data);
+    switch (receivedData.type) {
+      case MESSAGE:
+        return store.dispatch(message(receivedData));
+      case RECEIVE_USERS_ONLINE: //if the data coming in is an updated list of online users
+        return store.dispatch(receiveOnlineUsers(receivedData.usersOnline));
+    }
   };
 
   ws.onerror = (e) => {
@@ -40,6 +50,7 @@ const websocket = (ws) => (store) => (next) => (action) => {
     waitForSocket(ws, () => ws.send(JSON.stringify(data)));
   }
 
+  //console.log("Middleware");
   return next(action);
 };
 
