@@ -9,7 +9,7 @@ import {
   Platform,
 } from "react-native";
 import { useDispatch } from "react-redux";
-import { joinChat } from "../actions";
+import { joinChat } from "../actions/chat";
 import JoinChatContext from "../JoinChatContext";
 import Strings from "../values/string";
 

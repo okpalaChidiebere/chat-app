@@ -1,4 +1,4 @@
-import { MESSAGE } from "../actions";
+import { MESSAGE } from "../actions/chat";
 
 function messages(state = {}, action) {
   switch (action.type) {

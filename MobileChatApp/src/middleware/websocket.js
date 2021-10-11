@@ -1,4 +1,4 @@
-import { JOIN_CHAT, MESSAGE, message } from "../actions";
+import { JOIN_CHAT, MESSAGE, message, PRIVATE_MESSAGE } from "../actions/chat";
 import {
   receiveOnlineUsers,
   RECEIVE_USERS_ONLINE,
@@ -27,6 +27,23 @@ const websocket = (ws) => (store) => (next) => (action) => {
 
   if (action.socket) {
     let data;
+
+    /**
+     * IMPORTANT:
+     * ideally you will want all the data you will be sending to the ws backend
+     *  to be of format
+     *       data = {
+     *                 action: "",
+     *                 data: ""
+     *               }.
+     * This way you dont have to write switch
+     * statement for different type of data. You code will get unnecessarily long in a
+     * big project where you need ws actions often
+     *
+     *
+     * FOr DEMO purposes, this will do :)
+     */
+
     switch (action.type) {
       case MESSAGE:
         data = {
@@ -38,6 +55,12 @@ const websocket = (ws) => (store) => (next) => (action) => {
         data = {
           action: action.type,
           username: action.username,
+        };
+        break;
+      case PRIVATE_MESSAGE:
+        data = {
+          action: action.type,
+          data: action.data,
         };
         break;
       default:

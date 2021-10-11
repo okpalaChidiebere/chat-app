@@ -88,6 +88,9 @@ wss.on("connection", (ws) => {
         if (users[ws.id].username)
           messageHandler.handleMessage(wss, ws, users, messageText);
         break;
+      case "private_message":
+        console.log("Got a private_message: ", readableFmt.data);
+        break;
       case "hello": //for testing our redux websocket middleware!
         console.log("Got hello event", readableFmt.data);
         ws.send(JSON.stringify({ type: "message", message: "Good day!!" }));

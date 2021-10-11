@@ -1,13 +1,27 @@
 import React from "react";
 import { GiftedChat } from "react-native-gifted-chat"; //https://github.com/FaridSafi/react-native-gifted-chat
-import Strings from "../values/string";
+import { useDispatch } from "react-redux";
+import { privateMessage } from "../actions/chat";
 
-export function ChatScreen() {
+export function ChatScreen({ route }) {
   const [recvMessages, setRecvMessages] = React.useState([]);
 
-  React.useEffect(() => {}, []);
+  const dispatch = useDispatch();
+  const { userId } = route.params;
 
   const sendMessage = React.useCallback((messages = []) => {
+    /**
+     * The reason we are only sending the text string value instead of the full object message data is
+     * because we dont want to trust the client to send their userId themselves. The
+     * user can easily switch the user._id and it will look like other persons sent the message
+     *
+     * Once the user connects to our ws server, the backend will assign then a
+     */
+    const dataToSend = {
+      text: messages[0].text,
+      to: userId, //with this property, the server will look up users online and send this data to just this user specified here instead of everybody
+    };
+    dispatch(privateMessage(dataToSend, true));
     /**
      * We update our UI optimistically; if the message dont get broadcasted due to
      * our ws connection is closed, we could always catch this error and rollback this
