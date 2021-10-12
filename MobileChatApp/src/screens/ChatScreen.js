@@ -2,28 +2,25 @@ import React from "react";
 import { GiftedChat } from "react-native-gifted-chat"; //https://github.com/FaridSafi/react-native-gifted-chat
 import { useDispatch, useSelector } from "react-redux";
 import { privateMessage } from "../actions/chat";
+import { addPrivateConversation } from "../actions/conversations";
 
 export function ChatScreen({ route }) {
-  const [recvMessages, setRecvMessages] = React.useState([]);
-
   const dispatch = useDispatch();
   const { userId } = route.params;
   const selfUser = useSelector((state) => state.wsSelfUser);
+  const messages = useSelector((state) => state.conversations[userId].messages);
   //console.log(selfUser);
 
   const sendMessage = React.useCallback((messages = []) => {
     /**
-     * The reason we are only sending the text string value instead of the full object message data is
-     * because we dont want to trust the client to send their userId themselves. The
-     * user can easily switch the user._id and it will look like other persons sent the message
-     *
-     * Once the user connects to our ws server, the backend will assign then a
+     * we send the full message object
      */
     const dataToSend = {
-      text: messages[0].text,
+      message: messages[0],
       to: userId, //with this property, the server will look up users online and send this data to just this user specified here instead of everybody
     };
-    dispatch(privateMessage(dataToSend, true));
+    dispatch(addPrivateConversation(dataToSend));
+
     /**
      * We update our UI optimistically; if the message dont get broadcasted due to
      * our ws connection is closed, we could always catch this error and rollback this
@@ -32,15 +29,15 @@ export function ChatScreen({ route }) {
      * By default the messages[0].user._id will be 1 as specified in the GiftedChat user props.
      * This message will appear on the right
      */
-    setRecvMessages((previousMessages) =>
+    /*setRecvMessages((previousMessages) =>
       GiftedChat.append(previousMessages, messages)
-    );
+    );*/
   }, []);
 
   return (
     <GiftedChat
       renderUsernameOnMessage /**This will show the usernames of the user sending the message */
-      messages={recvMessages}
+      messages={messages}
       onSend={(messages) => sendMessage(messages)}
       user={{
         /**
