@@ -43,7 +43,10 @@ wss.on("connection", (ws) => {
         client.send(
           JSON.stringify({
             type: "users_online",
-            usersOnline: getUsersOnline(),
+            usersOnline: getUsersOnline().filter(
+              //we filter our each clients from their own list of online users because they know that they are online!
+              (u) => u.userId !== users[client.id].userId
+            ),
           })
         );
       }
@@ -82,7 +85,10 @@ wss.on("connection", (ws) => {
             client.send(
               JSON.stringify({
                 type: "users_online",
-                usersOnline: onlyUsersWithUsernames,
+                usersOnline: onlyUsersWithUsernames.filter(
+                  //we filter our each clients from their own list of online users because they know that they are online!
+                  (u) => u.userId !== users[client.id].userId
+                ),
               })
             );
           }

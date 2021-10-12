@@ -24,13 +24,7 @@ export function ChatScreen({ route }) {
      * We update our UI optimistically; if the message dont get broadcasted due to
      * our ws connection is closed, we could always catch this error and rollback this
      * UI update and let the user know that there is a network issue on this end.
-     *
-     * By default the messages[0].user._id will be 1 as specified in the GiftedChat user props.
-     * This message will appear on the right
      */
-    /*setRecvMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, messages)
-    );*/
   }, []);
 
   return (
