@@ -103,7 +103,37 @@ wss.on("connection", (ws) => {
           messageHandler.handleMessage(wss, ws, users, messageText);
         break;
       case "private_message":
-        console.log("Got a private_message: ", readableFmt.data);
+        //console.log("Got a private_message: ", readableFmt.data);
+        const sendTo = readableFmt.data.to; //we get the userId of the person we want to send the conversation to
+        const from = users[ws.id].userId;
+        const userValues = Object.values(users);
+        const socketIds = Object.keys(users);
+
+        //Go through each of the users and socketId to find out who to send this message to
+        for (const index in userValues) {
+          if (userValues[index].userId === sendTo) {
+            const socketId = socketIds[index];
+
+            for (const client of wss.clients) {
+              if (
+                client.id === socketId &&
+                client.readyState === WebSocket.OPEN
+              ) {
+                client.send(
+                  JSON.stringify({
+                    type: "private_message",
+                    data: {
+                      ...readableFmt.data,
+                      to: from, //the receiving user to know who the message was from
+                    },
+                  })
+                );
+                break; //break out of the loop looking for our the client to send
+              }
+            }
+            break; //break out of the loop looking for the userID
+          }
+        }
         break;
       case "hello": //for testing our redux websocket middleware!
         console.log("Got hello event", readableFmt.data);

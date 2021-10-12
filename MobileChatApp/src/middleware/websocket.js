@@ -1,10 +1,14 @@
 import { setWsUser, SET_WS_USER } from "../actions/wsSelfUser";
-import { JOIN_CHAT, MESSAGE, message, PRIVATE_MESSAGE } from "../actions/chat";
+import { JOIN_CHAT, MESSAGE, message } from "../actions/chat";
 import {
   receiveOnlineUsers,
   RECEIVE_USERS_ONLINE,
 } from "../actions/usersOnline";
-import { handleReceiveConversations } from "../actions/conversations";
+import {
+  addPrivateConversation,
+  ADD_PRIVATE_CONVERSATION,
+  handleReceiveConversations,
+} from "../actions/conversations";
 
 /**
  * Sends data to our WebSocket Server. As we dispatching redux actions, this middleware
@@ -23,6 +27,8 @@ const websocket = (ws) => (store) => (next) => (action) => {
         return;
       case SET_WS_USER:
         return store.dispatch(setWsUser(receivedData.data));
+      case ADD_PRIVATE_CONVERSATION:
+        return store.dispatch(addPrivateConversation(receivedData.data));
     }
   };
 
@@ -63,7 +69,7 @@ const websocket = (ws) => (store) => (next) => (action) => {
           username: action.username,
         };
         break;
-      case PRIVATE_MESSAGE:
+      case ADD_PRIVATE_CONVERSATION:
         data = {
           action: action.type,
           data: action.data,

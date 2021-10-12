@@ -1,14 +1,15 @@
 export const RECEIVE_CONVERSATIONS = "receive_conversations";
-export const ADD_PRIVATE_CONVERSATION = "send_private_message";
+export const ADD_PRIVATE_CONVERSATION = "private_message";
 
 export const receiveConversations = (conversations) => ({
   type: RECEIVE_CONVERSATIONS,
   conversations,
 });
 
-export const addPrivateConversation = (data) => ({
+export const addPrivateConversation = (data, socket = false) => ({
   type: ADD_PRIVATE_CONVERSATION,
   data,
+  socket,
 });
 
 export const handleReceiveConversations =

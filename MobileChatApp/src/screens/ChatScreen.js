@@ -1,7 +1,6 @@
 import React from "react";
 import { GiftedChat } from "react-native-gifted-chat"; //https://github.com/FaridSafi/react-native-gifted-chat
 import { useDispatch, useSelector } from "react-redux";
-import { privateMessage } from "../actions/chat";
 import { addPrivateConversation } from "../actions/conversations";
 
 export function ChatScreen({ route }) {
@@ -19,7 +18,7 @@ export function ChatScreen({ route }) {
       message: messages[0],
       to: userId, //with this property, the server will look up users online and send this data to just this user specified here instead of everybody
     };
-    dispatch(addPrivateConversation(dataToSend));
+    dispatch(addPrivateConversation(dataToSend, true));
 
     /**
      * We update our UI optimistically; if the message dont get broadcasted due to
